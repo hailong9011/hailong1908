@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <script
+      src="https://kit.fontawesome.com/1a1ee39ae0.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <div class="container">
+      <div class="text" style="display: flex; align-items: center">
+        <h4 style="padding-right: 20px"><b>Danh sách truyện hiện có</b></h4>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      <div class="search">
+        <form id="search-form">
+          <input
+            id="search-input-second"
+            type="search"
+            placeholder="Tìm kiếm"
+            style="height: 40px"
+          /><button id="search-btn-second">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="container-general">
+      <div class="row">
+        <%book.forEach(book => {%>
+        <div class="col-lg-2">
+          <div class="delete-info">
+            <div>
+              <button
+                id="delete-button"
+                type="submit"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#delete-book"
+                data-bs-title="<%=book.title%>"
+              >
+                Xóa
+              </button>
+            </div>
+            <a href="" style="text-decoration: none; color: black"
+              ><img src="<%=book.imgURL%>" alt="" height="270px" width="210px"
+            /></a>
+            <a href="" style="color: black; text-decoration: none"
+              ><h6 style="max-width: 180px"><b><%=book.title%></b></h6></a
+            >
+            <div
+              class="modal fade"
+              id="delete-book"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                      Xóa truyện
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    Bạn chắc chắn muốn xóa truyện này ?
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      id="btn-delete-book"
+                    >
+                      Xóa
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <%} ) %>
+      </div>
+    </div>
+    <form name="delete-book-form" method="POST"></form>
+    <script>
+      var btnDeleteBook = document.getElementById("btn-delete-book");
+      var bookTitle;
+      var deleteForm = document.forms["delete-book-form"];
+      var exampleModal = document.getElementById("delete-book");
+
+      exampleModal.addEventListener("show.bs.modal", function (event) {
+        var button = event.relatedTarget;
+        var bookTitle = button.getAttribute("data-bs-title");
+        btnDeleteBook.onclick = function () {
+          deleteForm.action =
+            "/admin/delete-book/" + bookTitle + "?_method=DELETE";
+          deleteForm.submit();
+        };
+      });
+    </script>
+    <script>
+      searchInput = $("#search-input-second");
+      searchButton = $("#search-btn-second");
+
+      searchButton.click((e) => {
+        e.preventDefault();
+        let inputValue = searchInput.val();
+        window.location.href = "/admin/delete-book/search/" + inputValue;
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

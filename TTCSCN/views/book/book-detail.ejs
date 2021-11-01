@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/pagination/pagination.js"></script>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/1a1ee39ae0.js"
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <div class="container">
+      <nav aria-label="breadcrumb" class="main-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/"><b>Trang chủ</b></a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <b><%=book.title%></b>
+          </li>
+        </ol>
+      </nav>
+    </div>
+    <div class="container">
+      <div class="page-detail">
+        <div class="book-detail">
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="book-img">
+                <img
+                  src="<%=book.imgURL%>"
+                  alt=""
+                  height="400px"
+                  width="280px"
+                />
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="detail">
+                <h2>
+                  <b id="book-title" data-bs-title="<%=book.title%>"
+                    ><%=book.title%></b
+                  >
+                </h2>
+                <span
+                  >Tác giả:<a href="/book/search/<%=book.author%>">
+                    <%=book.author%></a
+                  ></span
+                >
+                <span
+                  >Thể loại:<a href="/book/search/<%=book.category%>">
+                    <%=book.category%></a
+                  ></span
+                >
+                <span>Số chương: <%=book.chapter%></span>
+                <% if(book.status== true) { %>
+                <span>Tình trạng: Hoàn thành</span>
+                <% } else { %>
+                <span>Tình trạng: Chưa hoàn thành</span>
+                <% } %>
+                <span>Giá: <%=book.price%> đ</span>
+                <% if(userId != null) {%> <% if (!follow) {%>
+                <div class="button-follow">
+                  <button class="follow" id="btn-follow" data-bs-follow="true">
+                    <i class="icon fas fa-heart"></i>
+                    <span class="follow-status">Theo dõi</span>
+                  </button>
+                  <h5><b><%=book.follow%> người đã theo dõi</b></h5>
+                </div>
+                <%} else {%>
+                <div class="button-follow">
+                  <button
+                    class="follow"
+                    id="btn-follow"
+                    data-bs-follow="false"
+                    style="background-color: rgb(202, 21, 21)"
+                  >
+                    <i class="icon fas fa-times"></i>
+                    <span class="follow-status">Bỏ theo dõi</span>
+                  </button>
+                  <h5><b><%=book.follow%> người đã theo dõi</b></h5>
+                </div>
+                <%} %> <%} else {%>
+                <div style="display: flex">
+                  <button
+                    type="button"
+                    class="followModal"
+                    data-bs-toggle="modal"
+                    data-bs-target="#followModal"
+                  >
+                    <i class="icon fas fa-heart"></i>
+                    <span class="follow-status">Theo dõi</span>
+                  </button>
+                  <h5 style="padding: 10px 0px 0px 10px">
+                    <b><%=book.follow%> người đã theo dõi</b>
+                  </h5>
+                </div>
+                <div
+                  class="modal fade"
+                  id="followModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                          Thông báo
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <b style="color: red"
+                          >Bạn cần đăng nhập để theo dõi truyên này</b
+                        >
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">
+                          <a
+                            style="text-decoration: none; color: white"
+                            href="/login"
+                            >Đăng nhập</a
+                          >
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <%}%>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="first-content">
+                <p>
+                  Sách vở đó là tài sản tinh thần của con người, chính vì vậy,
+                  mỗi tác giả đều cố gắng chắt lọc những cái cần thiết và quan
+                  trọng nhất mà mình tích lũy được để viết lên những cuốn sách
+                  để đời. Tài sản của mỗi con người là khác nhau và bản thân tôi
+                  nghĩ rằng tài sản mà tôi có được đó là việc tích lũy vốn tri
+                  thức mà ngày ngày tôi đang dần học hỏi và rèn luyện, đó là thứ
+                  tài sản quý báu, không phải dùng bằng tiền có thể mua được,
+                  tôi phải bỏ thời gian, công sức, tài sản của mình ra để học
+                  hỏi và có được nó, chính vì vậy tôi luôn trân trọng và phát
+                  huy nó mỗi ngày.
+                </p>
+                <p>
+                  Ngày nay xã hội ngày càng phát triển, nhu cầu và thi hiểu đọc
+                  sách của người đọc cũng càng ngày càng giảm dần, chính vì thế
+                  sách vở ngày càng mất đi giá trị của nó. Công nghệ ngày càng
+                  hiện đại con người dường như quên đi nhiều thứ có giá trị của
+                  cuộc sống, họ luôn tích lũy cho mình vốn tri thức từ cuộc
+                  sống, nhưng dường như quên đi nhiều thứ, đang ra cần trân
+                  trọng và giữ gìn nó mỗi ngày. Chúng ta cần phải biết sống một
+                  cách có ý nghĩa, có như vậy khi ngoảnh lại, chúng ta mới không
+                  cảm thấy luyến tiếc vì những gì đã xảy ra với chính mình.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="list" style="border-bottom: solid thin black">
+          <h4><b>Chương mới nhất</b></h4>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+    <div class="container-general">
+      <div class="row">
+        <div class="col-sm-4">
+          <ul style="padding-left: 0px">
+            <% if (!userId) {%> <% newChapter.forEach(newChapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
+                  href="/book/<%=book.title%>/<%=newChapter.title%>?chapter=<%=newChapter.number%>"
+                  ><%=newChapter.title%></a
+                >
+              </li>
+              <i
+                class="fas fa-lock"
+                style="color: #74a6c1; padding-top: 5px"
+              ></i>
+            </div>
+            <%} ) %> <%} else {%> <%if (isAdmin==true) {%> <%
+            newChapter.forEach(newChapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=newChapter.title%>?chapter=<%=newChapter.number%>"
+                  ><%=newChapter.title%></a
+                >
+              </li>
+            </div>
+            <%} ) %><%} else {%> <% if(paymentbook) {%><%
+            newChapter.forEach(newChapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=newChapter.title%>?chapter=<%=newChapter.number%>"
+                  ><%=newChapter.title%></a
+                >
+              </li>
+            </div>
+            <%} ) %> <%} else {%><% newChapter.forEach(newChapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#payModal"
+                  href="/book/<%=book.title%>/<%=newChapter.title%>?chapter=<%=newChapter.number%>"
+                  ><%=newChapter.title%></a
+                >
+              </li>
+              <i
+                class="fas fa-lock"
+                style="color: #74a6c1; padding-top: 5px"
+              ></i>
+            </div>
+            <%} ) %> <%} %> <%} %><%} %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="list" style="border-bottom: solid thin black">
+          <h4><b>Danh sách chương</b></h4>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+    <div class="container-general">
+      <div class="row">
+        <div class="col-sm-4">
+          <ul style="padding-left: 0px">
+            <%if (!userId) {%> <% if (page==1) {%> <%
+            chapterFree.forEach(chapterFree => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapterFree.title%>?chapter=<%=chapterFree.number%>"
+                  ><%=chapterFree.title%></a
+                >
+              </li>
+            </div>
+            <%} ) %> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+              <i
+                class="fas fa-lock"
+                style="color: #74a6c1; padding-top: 5px"
+              ></i>
+            </div>
+            <%}) %> <% } else {%> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+              <i
+                class="fas fa-lock"
+                style="color: #74a6c1; padding-top: 5px"
+              ></i>
+            </div>
+            <%}) %> <%} %> <% } else {%> <% if(isAdmin==true) {%> <% if
+            (page==1) {%> <% chapterFree.forEach(chapterFree => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapterFree.title%>?chapter=<%=chapterFree.number%>"
+                  ><%=chapterFree.title%></a
+                >
+              </li>
+            </div>
+            <%} ) %> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+            </div>
+            <%}) %> <% } else {%> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+            </div>
+            <%}) %> <%} %> <%} else {%> <% if(paymentbook) {%><% if (page==1)
+            {%> <% chapterFree.forEach(chapterFree => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapterFree.title%>?chapter=<%=chapterFree.number%>"
+                  ><%=chapterFree.title%></a
+                >
+              </li>
+            </div>
+            <%} ) %> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+            </div>
+            <%}) %> <% } else {%> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+            </div>
+            <%}) %> <%} %> <%} else {%><% if (page==1) {%> <%
+            chapterFree.forEach(chapterFree => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  href="/book/<%=book.title%>/<%=chapterFree.title%>?chapter=<%=chapterFree.number%>"
+                  ><%=chapterFree.title%></a
+                >
+              </li>
+            </div>
+            <%} ) %> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#payModal"
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+              <i
+                class="fas fa-lock"
+                style="color: #74a6c1; padding-top: 5px"
+              ></i>
+            </div>
+            <%}) %> <% } else {%> <% chapter.forEach(chapter => {%>
+            <div class="link-chapter">
+              <li>
+                <a
+                  data-bs-toggle="modal"
+                  data-bs-target="#payModal"
+                  href="/book/<%=book.title%>/<%=chapter.title%>?chapter=<%=chapter.number%>"
+                  ><%=chapter.title%></a
+                >
+              </li>
+              <i
+                class="fas fa-lock"
+                style="color: #74a6c1; padding-top: 5px"
+              ></i>
+            </div>
+            <%}) %> <%} %><%} %> <%} %> <%} %>
+          </ul>
+        </div>
+        <nav aria-label="...">
+          <% if (pageNumber > 0) { %>
+          <ul class="pagination">
+            <li class="page-item">
+              <a class="page-link disable" href="/book/<%=book.title%>"
+                >First</a
+              >
+            </li>
+            <% var i = (page>5 ? page-4 :1) %> <% if (i!==1) {%>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+            <%} %> <% for (; i <= (page + 4) && i <= pageNumber; i++) { %> <% if
+            (i == page) { %>
+            <li class="page-item active"><a class="page-link"><%= i %></a></li>
+            <% } else { %>
+            <li class="page-item">
+              <a class="page-link" href="/book/<%=book.title%>?page=<%= i %>"
+                ><%= i %></a
+              >
+            </li>
+            <% } %> <% if (i == page + 4 && i < pageNumber) { %>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+            <% } %> <% } %> <% if (page == pageNumber) { %>
+            <li class="page-item disable"><a class="page-link">Last</a></li>
+            <% } else { %>
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="/book/<%=book.title%>?page=<%=pageNumber%>"
+                >Last</a
+              >
+            </li>
+            <% } %>
+          </ul>
+          <% } %>
+        </nav>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="loginModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              <b style="color: red">Thông báo</b>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Bạn cần đăng nhập và thanh toán để đọc toàn bộ truyện này !
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">
+              <a href="/login" style="color: white; text-decoration: none"
+                >Đăng nhập</a
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class="modal fade"
+        id="payModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                <b style="color: red">Thông báo</b>
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              Bạn cần phải thanh toán để đọc toàn bộ truyện này !
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary">
+                <a
+                  href="/recharge/<%=book.title%>/<%=book.price%>"
+                  style="color: white; text-decoration: none"
+                  >Thanh toán</a
+                >
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="list" style="border-bottom: solid thin black">
+          <h4><b>Bình luận</b></h4>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+    <div class="container-general">
+      <div class="row">
+        <div class="col-sm-8">
+          <div class="comment-area" style="padding: 0px">
+            <div class="comment-box">
+              <textarea
+                class="text-area"
+                placeholder="Nhập bình luận bạn tại đây ..."
+                style="width: -webkit-fill-available"
+                id="comment"
+                data-bs-toggle="modal"
+                data-bs-target="#commentModal"
+              ></textarea>
+            </div>
+            <% if(!userId) {%><button
+              class="btn btn-primary"
+              id="btn-send-cmt"
+              disabled
+            >
+              Gửi</button
+            ><%} else {%><button class="btn btn-primary" id="btn-send-cmt">
+              Gửi</button
+            ><%} %>
+          </div>
+        </div>
+      </div>
+      <% if(!userId) {%>
+      <div
+        class="modal fade"
+        id="commentModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                <b style="color: red">Thông báo</b>
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              Bạn cần đăng nhập để bình luận về truyên này
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary">
+                <a style="text-decoration: none; color: white" href="/login"
+                  >Đăng nhập</a
+                >
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%} %> <% comment.forEach (comment => {%> <% if(userId) {%> <% if
+      (isAdmin==true) {%>
+      <div class="row" style="padding-top: 10px">
+        <div class="col-sm-1">
+          <div class="avatar">
+            <img src="<%=comment.avatar%>&size=64" class="rounded-circle" />
+          </div>
+        </div>
+        <div class="col-sm-7" style="padding-right: 10px">
+          <div class="info-comment" style="display: flex">
+            <p style="padding-right: 8px"><b><%=comment.username%></b></p>
+            <p><%=comment.date%></p>
+            <% if(comment.isAdmin==true) {%>
+            <span style="font-weight: bold; color: red; padding-left: 10px"
+              >Admin</span
+            >
+            <span
+              class="delete-cmt"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              data-bs="<%=comment._id%>"
+              ><i style="color: red">Xóa</i></span
+            >
+            <%} else {%>
+            <span style="font-weight: bold; color: blue; padding-left: 10px"
+              >Thành viên</span
+            >
+            <span
+              class="delete-cmt"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              data-bs="<%=comment._id%>"
+              ><i style="color: red">Xóa</i></span
+            >
+            <%}%>
+          </div>
+          <div class="comment">
+            <p><%=comment.comment%></p>
+          </div>
+        </div>
+      </div>
+      <%} else {%>
+      <div class="row" style="padding-top: 10px">
+        <div class="col-sm-1">
+          <div class="avatar">
+            <img src="<%=comment.avatar%>&size=64" class="rounded-circle" />
+          </div>
+        </div>
+        <div class="col-sm-7" style="padding-right: 10px">
+          <div class="info-comment" style="display: flex">
+            <p style="padding-right: 8px"><b><%=comment.username%></b></p>
+            <p><%=comment.date%></p>
+            <% if(comment.isAdmin==true) {%>
+            <span style="font-weight: bold; color: red; padding-left: 10px"
+              >Admin</span
+            >
+            <%} else {%> <% if (userId != comment.userId) {%><span
+              style="font-weight: bold; color: blue; padding-left: 10px"
+              >Thành viên</span
+            >
+            <span
+              class="report-cmt"
+              data-bs-toggle="modal"
+              data-bs-target="#reportModal"
+              data-bs="<%=comment._id%>"
+              ><i>Báo cáo vi phạm</i></span
+            >
+            <%} else {%><span
+              style="font-weight: bold; color: blue; padding-left: 10px"
+              >Thành viên</span
+            >
+            <span
+              class="delete-cmt"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              data-bs="<%=comment._id%>"
+              ><i style="color: red">Xóa</i></span
+            ><%} %> <%}%>
+          </div>
+          <div class="comment">
+            <p><%=comment.comment%></p>
+          </div>
+        </div>
+      </div>
+      <%} %> <%} else {%>
+      <div class="row" style="padding-top: 10px">
+        <div class="col-sm-1">
+          <div class="avatar">
+            <img src="<%=comment.avatar%>&size=64" class="rounded-circle" />
+          </div>
+        </div>
+        <div class="col-sm-7" style="padding-right: 10px">
+          <div class="info-comment" style="display: flex">
+            <p style="padding-right: 8px"><b><%=comment.username%></b></p>
+            <p><%=comment.date%></p>
+            <% if(comment.isAdmin==true) {%>
+            <span style="font-weight: bold; color: red; padding-left: 10px"
+              >Admin</span
+            >
+            <%} else {%>
+            <span style="font-weight: bold; color: blue; padding-left: 10px"
+              >Thành viên</span
+            >
+            <%}%>
+          </div>
+          <div class="comment">
+            <p><%=comment.comment%></p>
+          </div>
+        </div>
+      </div>
+      <%} %> <%}) %>
+    </div>
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              <b style="color: red">Xóa bình luận</b>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">Bạn chắc chắn muốn xóa bình luận này ?</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="delete-btn">
+              Xóa
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="reportModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              <b style="color: red">Báo cáo</b>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Bạn muốn báo cáo bình luận này vì đã vi phạm tiêu chuẩn cộng đồng ?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="report-btn">
+              Gửi
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form name="comment-form" method="POST"></form>
+    <form name="follow-form" method="POST"></form>
+    <form name="delete-form" method="POST"></form>
+    <form name="report-form" method="POST"></form>
+    <script>
+      var btnDeleteCmt = document.getElementById("delete-btn");
+      var deleteForm = document.forms["delete-form"];
+      var deleteModal = document.getElementById("deleteModal");
+      deleteModal.addEventListener("show.bs.modal", function () {
+        $(".delete-cmt").click(function () {
+          var commentId = $(this).attr("data-bs");
+          deleteForm.action =
+            "/book/delete/<%=book.title%>/" + commentId + "?_method=DELETE";
+          btnDeleteCmt.onclick = function () {};
+        });
+      });
+    </script>
+    <script>
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0");
+      var yyyy = today.getFullYear();
+      var hh = today.getHours();
+      var mn = today.getMinutes();
+      time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+      var btnReport = document.getElementById("report-btn");
+      var reportForm = document.forms["report-form"];
+      var reportModal = document.getElementById("reportModal");
+      reportModal.addEventListener("show.bs.modal", function (event) {
+        $(".report-cmt").click(function () {
+          var reportId = $(this).attr("data-bs");
+          reportForm.action =
+            "/book/report/<%=book.title%>/" + reportId + "/" + time;
+          btnReport.onclick = function () {};
+        });
+      });
+    </script>
+    <script>
+      commentForm = document.forms["comment-form"];
+      $(document).ready(function () {
+        $("#btn-send-cmt").click(function () {
+          var today = new Date();
+          var dd = String(today.getDate()).padStart(2, "0");
+          var mm = String(today.getMonth() + 1).padStart(2, "0");
+          var yyyy = today.getFullYear();
+          var hh = today.getHours();
+          var mn = today.getMinutes();
+          time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+          comment = $("#comment").val();
+          if (comment != "") {
+            commentForm.action =
+              "/book/comment/<%=book.title%>/" + time + "/" + comment;
+            commentForm.submit();
+          }
+        });
+      });
+    </script>
+    <script>
+      followForm = document.forms["follow-form"];
+      $(document).ready(function () {
+        $(".follow").click(function () {
+          var data = document
+            .getElementById("btn-follow")
+            .getAttribute("data-bs-follow");
+          if (data == "true") {
+            follow = true;
+            followForm.action =
+              "/book/follow/<%=book.title%>/" + follow + "/<%=book.follow%>";
+            followForm.submit();
+          } else {
+            follow = false;
+            followForm.action =
+              "/book/follow/<%=book.title%>/" + follow + "/<%=book.follow%>";
+            followForm.submit();
+          }
+        });
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

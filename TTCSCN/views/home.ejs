@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/1a1ee39ae0.js"
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <div class="container">
+      <div class="title">
+        <div class="col-xs-6" style="height: 47px">
+          <h2>
+            <a title="Truyen hot" class="rv-sr-a">Truyện mới ra mắt</a>
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="left-side col-lg-8 col-md-8">
+        <div class="grid-items-hotbook">
+          <div class="row">
+            <%book.forEach(book => {%> <% if(book.status == true) {%>
+            <div class="col-lg-3">
+              <div class="info-fullbook">
+                <div class="label-fullbook">
+                  <span><b style="padding-left: 10px">Full</b></span>
+                </div>
+                <a href="/book/<%=book.title%>"
+                  ><img
+                    src="<%=book.imgURL%>"
+                    alt=""
+                    height="250px"
+                    width="180px"
+                /></a>
+                <a href="/book/<%=book.title%>"
+                  ><h6 style="max-width: 180px; height: 35px">
+                    <i
+                      class="fas fa-book"
+                      style="padding: 0px 10px 0px 5px; color: mediumblue"
+                    ></i
+                    ><b><%=book.title%></b>
+                  </h6></a
+                >
+                <span class="price"
+                  ><i
+                    class="fas fa-wallet"
+                    style="padding: 5px 10px 0px 0px; color: crimson"
+                  ></i
+                  >Giá: <%=book.price%> đ</span
+                ><span class="category"
+                  ><i
+                    class="fab fa-readme"
+                    style="padding: 5px 10px 0px 0px; color: darkorange"
+                  ></i
+                  >Thể loại: <%=book.category%></span
+                >
+              </div>
+            </div>
+            <% } else { %>
+            <div class="col">
+              <a href="/book/<%=book.title%>"
+                ><img
+                  src="<%=book.imgURL%>"
+                  alt=""
+                  height="250px"
+                  width="180px"
+              /></a>
+              <a href="/book/<%=book.title%>"
+                ><h6 style="max-width: 180px; height: 45px">
+                  <i
+                    class="fas fa-book"
+                    style="padding: 0px 10px 0px 5px; color: mediumblue"
+                  ></i
+                  ><b><%=book.title%></b>
+                </h6></a
+              >
+              <span class="price">
+                <i
+                  class="fas fa-wallet"
+                  style="padding: 5px 10px 0px 0px; color: crimson"
+                ></i>
+                Giá: <%=book.price%> đ</span
+              >
+              <span class="category"
+                ><i
+                  class="fab fa-readme"
+                  style="padding: 5px 10px 0px 0px; color: darkorange"
+                ></i
+                >Thể loại: <%=book.category%></span
+              >
+            </div>
+            <%} %> <% } ) %>
+          </div>
+        </div>
+      </div>
+      <div class="right-side col-lg-4 col-md-4">
+        <div class="top-comment">
+          <div class="box-comment">
+            <h3>Bình luận nổi bật</h3>
+            <div class="scroll-y">
+              <div class="list-comment">
+                <% comment.forEach (comment => {%> <% if(userId) {%> <% if
+                (isAdmin==true) {%>
+                <div
+                  class="row-sm-10"
+                  style="display: flex; padding: 10px 10px 0px 0px"
+                >
+                  <div class="col-sm-2">
+                    <div class="avatar">
+                      <img
+                        src="<%=comment.avatar%>&size=48"
+                        class="rounded-circle"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-sm-10"
+                    style="
+                      border: solid thin gray;
+                      padding: 5px;
+                      border-radius: 15px;
+                      background-color: #d3d3d32b;
+                    "
+                  >
+                    <div
+                      class="info-comment"
+                      style="display: flex; flex-direction: column"
+                    >
+                      <div>
+                        <span style="padding-right: 8px">
+                          <b><%=comment.username%></b>
+                        </span>
+                        <% if(comment.isAdmin==true) {%><span
+                          style="
+                            font-weight: bold;
+                            color: red;
+                            padding-left: 10px;
+                          "
+                          >Admin</span
+                        ><span
+                          class="delete-cmt"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteModal"
+                          data-bs="<%=comment._id%>"
+                          ><i style="color: red">Xóa</i></span
+                        >
+                        <%} else {%>
+                        <span
+                          style="
+                            font-weight: bold;
+                            color: blue;
+                            padding-left: 10px;
+                          "
+                          >Thành viên</span
+                        ><span
+                          class="delete-cmt"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteModal"
+                          data-bs="<%=comment._id%>"
+                          ><i style="color: red">Xóa</i></span
+                        >
+                        <%} %>
+                      </div>
+                      <div class="comment">
+                        <p><%=comment.comment%></p>
+                      </div>
+                      <div><p style="float: right"><%=comment.date%></p></div>
+                    </div>
+                  </div>
+                </div>
+                <%} else {%>
+                <div
+                  class="row-sm-10"
+                  style="display: flex; padding: 10px 10px 0px 0px"
+                >
+                  <div class="col-sm-2">
+                    <div class="avatar">
+                      <img
+                        src="<%=comment.avatar%>&size=48"
+                        class="rounded-circle"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-sm-10"
+                    style="
+                      border: solid thin gray;
+                      padding: 5px;
+                      border-radius: 15px;
+                      background-color: #d3d3d32b;
+                    "
+                  >
+                    <div
+                      class="info-comment"
+                      style="display: flex; flex-direction: column"
+                    >
+                      <div>
+                        <span style="padding-right: 8px">
+                          <b><%=comment.username%></b>
+                        </span>
+                        <% if(comment.isAdmin==true) {%><span
+                          style="
+                            font-weight: bold;
+                            color: red;
+                            padding-left: 10px;
+                          "
+                          >Admin</span
+                        ><%} else {%> <% if(userId != comment.userId) {%><span
+                          style="
+                            font-weight: bold;
+                            color: blue;
+                            padding-left: 10px;
+                          "
+                          >Thành viên</span
+                        ><span
+                          class="report-cmt"
+                          data-bs-toggle="modal"
+                          data-bs-target="#reportModal"
+                          data-bs="<%=comment._id%>"
+                          ><i style="color: red">Báo cáo</i></span
+                        >
+                        <%} else {%><span
+                          style="
+                            font-weight: bold;
+                            color: blue;
+                            padding-left: 10px;
+                          "
+                          >Thành viên</span
+                        ><span
+                          class="delete-cmt"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteModal"
+                          data-bs="<%=comment._id%>"
+                          ><i style="color: red">Xóa</i></span
+                        >
+                        <%} %> <%} %>
+                      </div>
+                      <div class="comment">
+                        <p><%=comment.comment%></p>
+                      </div>
+                      <div><p style="float: right"><%=comment.date%></p></div>
+                    </div>
+                  </div>
+                </div>
+                <%} %> <%} else {%>
+                <div
+                  class="row-sm-10"
+                  style="display: flex; padding: 10px 10px 0px 0px"
+                >
+                  <div class="col-sm-2">
+                    <div class="avatar">
+                      <img
+                        src="<%=comment.avatar%>&size=48"
+                        class="rounded-circle"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-sm-10"
+                    style="
+                      border: solid thin gray;
+                      padding: 5px;
+                      border-radius: 15px;
+                      background-color: #d3d3d32b;
+                    "
+                  >
+                    <div
+                      class="info-comment"
+                      style="display: flex; flex-direction: column"
+                    >
+                      <div>
+                        <span style="padding-right: 8px">
+                          <b><%=comment.username%></b>
+                        </span>
+                        <% if(comment.isAdmin==true) {%><span
+                          style="
+                            font-weight: bold;
+                            color: red;
+                            padding-left: 10px;
+                          "
+                          >Admin</span
+                        ><%} else {%>
+                        <span
+                          style="
+                            font-weight: bold;
+                            color: blue;
+                            padding-left: 10px;
+                          "
+                          >Thành viên</span
+                        ><%} %>
+                      </div>
+                      <div class="comment">
+                        <p><%=comment.comment%></p>
+                      </div>
+                      <div><p style="float: right"><%=comment.date%></p></div>
+                    </div>
+                  </div>
+                </div>
+                <%} %> <%}) %>
+              </div>
+            </div>
+            <div class="comment-area">
+              <% if(!userId) {%>
+              <textarea
+                class="your-comment"
+                id="comment"
+                placeholder="Nhập bình luận tại đây"
+                data-bs-toggle="modal"
+                data-bs-target="#commentModal"
+              ></textarea>
+              <button id="btn-send-cmt" class="btn btn-primary" disabled>
+                Gửi</button
+              ><%} else {%>
+              <textarea
+                class="your-comment"
+                id="comment"
+                placeholder="Nhập bình luận tại đây"
+              ></textarea>
+              <button id="btn-send-cmt" class="btn btn-primary">Gửi</button><%}
+              %>
+            </div>
+          </div>
+        </div>
+        <div
+          class="modal fade"
+          id="deleteModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                  <b style="color: red">Xóa bình luận</b>
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Bạn chắc chắn muốn xóa bình luận này ?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="delete-btn">
+                  Xóa
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="modal fade"
+          id="reportModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                  <b style="color: red">Báo cáo</b>
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Bạn muốn báo cáo bình luận này vì đã vi phạm tiêu chuẩn cộng
+                đồng ?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="report-btn">
+                  Gửi
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="modal fade"
+          id="commentModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                  <b style="color: red">Thông báo</b>
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">Bạn cần đăng nhập để bình luận !</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary">
+                  <a style="text-decoration: none; color: white" href="/login"
+                    >Đăng nhập</a
+                  >
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="title">
+        <div class="col-xs-6" style="height: 47px">
+          <h2>
+            <a title="Truyen hot" class="rv-sr-a">Truyện nhiều người mua nhất</a>
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="grid-items-hotbook">
+        <div class="row">
+          <%bookPayed.forEach(bookPayed => {%> <% if(bookPayed.status == true)
+          {%>
+          <div class="col-lg-2">
+            <div class="info-fullbook">
+              <div class="label-fullbook">
+                <span><b style="padding-left: 10px">Full</b></span>
+              </div>
+              <a href="/book/<%=bookPayed.title%>"
+                ><img
+                  src="<%=bookPayed.imgURL%>"
+                  alt=""
+                  height="250px"
+                  width="180px"
+              /></a>
+              <a href="/book/<%=bookPayed.title%>"
+                ><h6 style="max-width: 180px; height: 35px">
+                  <i
+                    class="fas fa-book"
+                    style="padding: 0px 10px 0px 5px; color: mediumblue"
+                  ></i
+                  ><b><%=bookPayed.title%></b>
+                </h6></a
+              >
+              <span class="price"
+                ><i
+                  class="fas fa-wallet"
+                  style="padding: 5px 10px 0px 0px; color: crimson"
+                ></i
+                >Giá: <%=bookPayed.price%> đ</span
+              ><span class="category"
+                ><i
+                  class="fab fa-readme"
+                  style="padding: 5px 10px 0px 0px; color: darkorange"
+                ></i
+                >Thể loại: <%=bookPayed.category%></span
+              >
+            </div>
+          </div>
+          <% } else { %>
+          <div class="col">
+            <a href="/book/<%=bookPayed.title%>"
+              ><img
+                src="<%=bookPayed.imgURL%>"
+                alt=""
+                height="250px"
+                width="180px"
+            /></a>
+            <a href="/book/<%=bookPayed.title%>"
+              ><h6 style="max-width: 180px; height: 45px">
+                <i
+                  class="fas fa-book"
+                  style="padding: 0px 10px 0px 5px; color: mediumblue"
+                ></i
+                ><b><%=bookPayed.title%></b>
+              </h6></a
+            >
+            <span class="price">
+              <i
+                class="fas fa-wallet"
+                style="padding: 5px 10px 0px 0px; color: crimson"
+              ></i>
+              Giá: <%=bookPayed.price%> đ</span
+            >
+            <span class="category"
+              ><i
+                class="fab fa-readme"
+                style="padding: 5px 10px 0px 0px; color: darkorange"
+              ></i
+              >Thể loại: <%=bookPayed.category%></span
+            >
+          </div>
+          <%} %> <% } ) %>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="title">
+        <div class="col-xs-6" style="height: 47px">
+          <h2>
+            <a title="Truyen hot" class="rv-sr-a">Truyện nhiều theo dõi nhất</a>
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="grid-items-hotbook">
+        <div class="row">
+          <%bookFollowed.forEach(bookFollowed => {%> <% if(bookFollowed.status == true)
+          {%>
+          <div class="col-lg-2">
+            <div class="info-fullbook">
+              <div class="label-fullbook">
+                <span><b style="padding-left: 10px">Full</b></span>
+              </div>
+              <a href="/book/<%=bookFollowed.title%>"
+                ><img
+                  src="<%=bookFollowed.imgURL%>"
+                  alt=""
+                  height="250px"
+                  width="180px"
+              /></a>
+              <a href="/book/<%=bookFollowed.title%>"
+                ><h6 style="max-width: 180px; height: 35px">
+                  <i
+                    class="fas fa-book"
+                    style="padding: 0px 10px 0px 5px; color: mediumblue"
+                  ></i
+                  ><b><%=bookFollowed.title%></b>
+                </h6></a
+              >
+              <span class="price"
+                ><i
+                  class="fas fa-wallet"
+                  style="padding: 5px 10px 0px 0px; color: crimson"
+                ></i
+                >Giá: <%=bookFollowed.price%> đ</span
+              ><span class="category"
+                ><i
+                  class="fab fa-readme"
+                  style="padding: 5px 10px 0px 0px; color: darkorange"
+                ></i
+                >Thể loại: <%=bookFollowed.category%></span
+              >
+            </div>
+          </div>
+          <% } else { %>
+          <div class="col">
+            <a href="/book/<%=bookFollowed.title%>"
+              ><img
+                src="<%=bookFollowed.imgURL%>"
+                alt=""
+                height="250px"
+                width="180px"
+            /></a>
+            <a href="/book/<%=bookFollowed.title%>"
+              ><h6 style="max-width: 180px; height: 45px">
+                <i
+                  class="fas fa-book"
+                  style="padding: 0px 10px 0px 5px; color: mediumblue"
+                ></i
+                ><b><%=bookFollowed.title%></b>
+              </h6></a
+            >
+            <span class="price">
+              <i
+                class="fas fa-wallet"
+                style="padding: 5px 10px 0px 0px; color: crimson"
+              ></i>
+              Giá: <%=bookFollowed.price%> đ</span
+            >
+            <span class="category"
+              ><i
+                class="fab fa-readme"
+                style="padding: 5px 10px 0px 0px; color: darkorange"
+              ></i
+              >Thể loại: <%=bookFollowed.category%></span
+            >
+          </div>
+          <%} %> <% } ) %>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="title">
+        <div class="col-xs-6" style="height: 47px">
+          <h2 class="title">
+            <a title="Truyen hot" class="rv-sr-a" href="danh-sach/truyen-full/"
+              >Truyện đã hoàn thành</a
+            >
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="grid-items-fullbook">
+        <div class="row">
+          <%bookFull.forEach(bookFull => {%>
+          <div class="col-lg-2">
+            <div class="info-fullbook">
+              <div class="label-fullbook">
+                <span><b style="padding-left: 10px">Full</b></span>
+              </div>
+              <a href="/book/<%=bookFull.title%>"
+                ><img
+                  src="<%=bookFull.imgURL%>"
+                  alt=""
+                  height="250px"
+                  width="180px"
+              /></a>
+              <a href="/book/<%=bookFull.title%>"
+                ><i
+                  class="fas fa-book"
+                  style="padding: 0px 10px 0px 5px; color: mediumblue"
+                ></i>
+                <h6 style="max-width: 180px; height: 35px">
+                  <b><%=bookFull.title%></b>
+                </h6></a
+              >
+              <span class="price"
+                ><i
+                  class="fas fa-wallet"
+                  style="padding: 5px 10px 0px 0px; color: crimson"
+                ></i
+                >Giá: <%=bookFull.price%> đ</span
+              ><span class="category"
+                ><i
+                  class="fab fa-readme"
+                  style="padding: 5px 10px 0px 0px; color: darkorange"
+                ></i
+                >Thể loại: <%=bookFull.category%></span
+              >
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+    <footer><%- include('partials/footer.ejs')%></footer>
+    <form name="delete-form" method="POST"></form>
+    <form name="report-form" method="POST"></form>
+    <form name="comment-form" method="POST"></form>
+    <script>
+      var btnDeleteCmt = document.getElementById("delete-btn");
+      var deleteForm = document.forms["delete-form"];
+      var deleteModal = document.getElementById("deleteModal");
+      deleteModal.addEventListener("show.bs.modal", function () {
+        $(".delete-cmt").click(function () {
+          var commentId = $(this).attr("data-bs");
+          deleteForm.action = "/delete/" + commentId + "?_method=DELETE";
+          btnDeleteCmt.onclick = function () {
+            deleteForm.submit();
+          };
+        });
+      });
+    </script>
+    <script>
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0");
+      var yyyy = today.getFullYear();
+      var hh = today.getHours();
+      var mn = today.getMinutes();
+      time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+      var btnReport = document.getElementById("report-btn");
+      var reportForm = document.forms["report-form"];
+      var reportModal = document.getElementById("reportModal");
+      reportModal.addEventListener("show.bs.modal", function (event) {
+        $(".report-cmt").click(function () {
+          var reportId = $(this).attr("data-bs");
+          reportForm.action = "/report/" + reportId + "/" + time;
+          btnReport.onclick = function () {
+            reportForm.submit();
+          };
+        });
+      });
+    </script>
+    <script>
+      commentForm = document.forms["comment-form"];
+      $(document).ready(function () {
+        $("#btn-send-cmt").click(function () {
+          var today = new Date();
+          var dd = String(today.getDate()).padStart(2, "0");
+          var mm = String(today.getMonth() + 1).padStart(2, "0");
+          var yyyy = today.getFullYear();
+          var hh = today.getHours();
+          var mn = today.getMinutes();
+          time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+          comment = $("#comment").val();
+          console.log(comment);
+          if (comment != "") {
+            commentForm.action = "/comment/" + time + "/" + comment;
+            commentForm.submit();
+          }
+        });
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

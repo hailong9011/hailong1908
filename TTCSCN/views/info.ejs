@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/1a1ee39ae0.js"
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <div class="container-general" style="background-color: #dedede63">
+      <div class="main-body">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="main-breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/"><b>Trang chủ</b></a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              <b>Thông tin cá nhân</b>
+            </li>
+          </ol>
+        </nav>
+        <!-- /Breadcrumb -->
+
+        <div class="row gutters-sm">
+          <div class="col-md-4 mb-3">
+            <div class="card">
+              <div class="card-main">
+                <div class="d-flex flex-column align-items-center text-center">
+                  <img
+                    src="<%=user.avatar%>"
+                    alt="Admin"
+                    class="rounded-circle"
+                    width="150"
+                  />
+                  <div class="mt-3">
+                    <h4><%=user.username%></h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <div class="card mb-3">
+              <div class="card-main">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0" style="padding-top: 12px">
+                      Tên người dùng
+                    </h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value="<%=user.username%>"
+                      style="
+                        padding: 10px 10px 10px 0px;
+                        background-color: white;
+                        border: none;
+                      "
+                      disabled
+                    /><span
+                      id="btn-update"
+                      class="btn btn-secondary"
+                      style="float: right"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </span>
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Email</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary"><%=user.email%></div>
+                </div>
+                <hr />
+                <% if(isAdmin!=true) {%>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Tổng số tiền đã nạp</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <%=user.cashRecharged%> VNĐ
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Tổng số truyện đã mua</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary"><%=bookPay%></div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Số dư tài khoản hiện tại</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <%=user.totalCash%> VNĐ
+                  </div>
+                </div>
+                <hr />
+                <%} %>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <button id="btn-save" class="btn btn-info" target="__blank">
+                      Lưu
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="box shadow-sm rounded bg-white mb-3">
+                <div class="box-title border-bottom p-3">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <h6 class="m-0"><b>Thông báo</b></h6>
+                    </div>
+                    <%if(isAdmin==true) {%>
+                    <div class="col-sm-8">
+                      <span
+                        class="read-all"
+                        style="float: right; cursor: pointer"
+                        >Đánh dấu đã đọc tất cả<i
+                          class="fas fa-check"
+                          style="padding-left: 10px; color: gray"
+                        ></i
+                      ></span>
+                    </div>
+                    <%} %>
+                  </div>
+                </div>
+                <% if(isAdmin==false) {%><% noti.forEach (noti => {%> <% if
+                (noti.read==true) {%>
+                <div class="box-body p-0">
+                  <div
+                    href="/book/<%=noti.book%>"
+                    class="
+                      noti-content
+                      p-3
+                      d-flex
+                      align-items-center
+                      border-bottom
+                      osahan-post-header
+                    "
+                    data-id="<%=noti._id%>"
+                  >
+                    <div class="dropdown-list-image mr-3">
+                      <img src="<%=noti.img%>" height="50px" width="50px" />
+                    </div>
+                    <div class="font-weight-bold mr-3" style="width: 100%">
+                      <div class="text-truncate">
+                        <b><span><%=noti.book%></span></b>
+                      </div>
+                      <div class="small"><%=noti.notification%></div>
+                    </div>
+                    <span class="ml-auto mb-auto">
+                      <div class="text-right text-muted pt-1">
+                        <%=noti.date%>
+                      </div>
+                    </span>
+                  </div>
+                </div>
+                <%} else {%>
+                <div class="box-body p-0">
+                  <div
+                    href="/book/<%=noti.book%>"
+                    class="
+                      noti-content
+                      p-3
+                      d-flex
+                      align-items-center
+                      border-bottom
+                      osahan-post-header
+                    "
+                    style="background-color: aliceblue;"
+                    data-id="<%=noti._id%>"
+                  >
+                    <div class="dropdown-list-image mr-3">
+                      <img src="<%=noti.img%>" height="50px" width="50px" />
+                    </div>
+                    <div class="font-weight-bold mr-3" style="width: 100%">
+                      <div class="text-truncate">
+                        <b><span><%=noti.book%></span></b>
+                      </div>
+                      <div class="small"><%=noti.notification%></div>
+                    </div>
+                    <span class="ml-auto mb-auto">
+                      <div class="text-right text-muted pt-1">
+                        <%=noti.date%>
+                      </div>
+                    </span>
+                  </div>
+                </div>
+                <%} %> <%}) %><%} else {%><% notiAdmin.forEach (notiAdmin => {%>
+                <% if (notiAdmin.read==true) {%> <% if(notiAdmin.deleted==false)
+                {%>
+                <div
+                  class="box-body p-0"
+                  style="
+                    padding: 10px !important;
+                    border-bottom: solid thin lightgrey;
+                  "
+                >
+                  <div class="row">
+                    <div class="col-md-10">
+                      <div
+                        class="noti-content-admin p-3 d-flex osahan-post-header"
+                        style="flex-direction: column"
+                      >
+                        <div class="font-weight-bold mr-3" style="width: 100%">
+                          <div class="text-truncate">
+                            <% if(notiAdmin.book=="Bình luận nổi bật") {%><a
+                              href="/"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} else {%><a href="/book/<%=notiAdmin.book%>"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} %>
+                          </div>
+                        </div>
+                        <div class="noti-report">
+                          <i><%=notiAdmin.notification%></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <span><%=notiAdmin.date%></span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="row comment">
+                      <div class="col-md-2">
+                        <div
+                          class="avatar"
+                          style="display: flex; justify-content: center"
+                        >
+                          <img src="<%=notiAdmin.avatar%>" alt="" />
+                        </div>
+                      </div>
+                      <div
+                        class="col-md-10"
+                        style="border: solid thin lightgrey"
+                      >
+                        <div class="comment-content">
+                          <div class="info-reported">
+                            <span><b><%=notiAdmin.username%></b></span>
+                            <span><%=notiAdmin.date%></span>
+                            <span
+                              class="delete-report"
+                              data-bs-toggle="modal"
+                              data-bs-target="#deleteModal"
+                              data-bs="<%=notiAdmin.commentId%>"
+                              style="cursor: pointer"
+                              ><i style="color: red; float: right"
+                                ><b>Xóa</b></i
+                              ></span
+                            >
+                          </div>
+                          <div class="content">
+                            <span><%=notiAdmin.comment%></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <%} else {%>
+                <div
+                  class="box-body p-0"
+                  style="
+                    padding: 10px !important;
+                    border-bottom: solid thin lightgrey;
+                  "
+                >
+                  <div class="row">
+                    <div class="col-md-10">
+                      <div
+                        class="noti-content-admin p-3 d-flex osahan-post-header"
+                        style="flex-direction: column"
+                      >
+                        <div class="font-weight-bold mr-3" style="width: 100%">
+                          <div class="text-truncate">
+                            <% if(notiAdmin.book=="Bình luận nổi bật") {%><a
+                              href="/"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} else {%><a href="/book/<%=notiAdmin.book%>"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} %>
+                          </div>
+                        </div>
+                        <div class="noti-report">
+                          <i><%=notiAdmin.notification%></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <span><%=notiAdmin.date%></span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="row comment">
+                      <span style="padding-left: 30px"
+                        ><i>Bình luận đã bị xóa</i></span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <%} %> <%} else {%> <% if(notiAdmin.deleted==false) {%>
+                <div
+                  class="box-body p-0"
+                  style="
+                    padding: 10px !important;
+                    border-bottom: solid thin lightgrey;
+                    background-color: aliceblue;
+                  "
+                >
+                  <div class="row">
+                    <div class="col-md-10">
+                      <div
+                        class="noti-content-admin p-3 d-flex osahan-post-header"
+                        style="flex-direction: column"
+                      >
+                        <div class="font-weight-bold mr-3" style="width: 100%">
+                          <div class="text-truncate">
+                            <% if(notiAdmin.book=="Bình luận nổi bật") {%><a
+                              href="/"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} else {%><a href="/book/<%=notiAdmin.book%>"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} %>
+                          </div>
+                        </div>
+                        <div class="noti-report">
+                          <i><%=notiAdmin.notification%></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <span><%=notiAdmin.date%></span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="row comment">
+                      <div class="col-md-2">
+                        <div
+                          class="avatar"
+                          style="display: flex; justify-content: center"
+                        >
+                          <img src="<%=notiAdmin.avatar%>" alt="" />
+                        </div>
+                      </div>
+                      <div
+                        class="col-md-10"
+                        style="border: solid thin lightgrey"
+                      >
+                        <div class="comment-content">
+                          <div class="info-reported">
+                            <span><b><%=notiAdmin.username%></b></span>
+                            <span><%=notiAdmin.dateComment%></span>
+                            <span
+                              class="delete-report"
+                              data-bs-toggle="modal"
+                              data-bs-target="#deleteModal"
+                              data-bs="<%=notiAdmin.commentId%>"
+                              style="cursor: pointer"
+                              ><i style="color: red; float: right"
+                                ><b>Xóa</b></i
+                              ></span
+                            >
+                          </div>
+                          <div class="content">
+                            <span><%=notiAdmin.comment%></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <%} else {%>
+                <div
+                  class="box-body p-0"
+                  style="
+                    padding: 10px !important;
+                    border-bottom: solid thin lightgrey;
+                  "
+                >
+                  <div class="row">
+                    <div class="col-md-10">
+                      <div
+                        class="noti-content-admin p-3 d-flex osahan-post-header"
+                        style="flex-direction: column"
+                      >
+                        <div class="font-weight-bold mr-3" style="width: 100%">
+                          <div class="text-truncate">
+                            <% if(notiAdmin.book=="Bình luận nổi bật") {%><a
+                              href="/"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} else {%><a href="/book/<%=notiAdmin.book%>"
+                              ><b><span><%=notiAdmin.book%></span></b></a
+                            ><%} %>
+                          </div>
+                        </div>
+                        <div class="noti-report">
+                          <i><%=notiAdmin.notification%></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <span><%=notiAdmin.date%></span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="row comment">
+                      <span style="padding-left: 30px"
+                        ><i>Bình luận đã bị xóa</i></span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <%} %> <%} %> <%}) %> <%} %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="modal fade"
+        id="deleteModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                <b style="color: red">Xóa bình luận</b>
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">Bạn chắc chắn muốn xóa bình luận này ?</div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" id="delete-btn">
+                Xóa
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form name="delete-form" method="POST"></form>
+    <script>
+      var btnDeleteCmt = document.getElementById("delete-btn");
+      var deleteForm = document.forms["delete-form"];
+      var deleteModal = document.getElementById("deleteModal");
+      deleteModal.addEventListener("show.bs.modal", function () {
+        $(".delete-report").click(function () {
+          var commentId = $(this).attr("data-bs");
+          btnDeleteCmt.onclick = function () {
+            deleteForm.action = "/info/delete-cmt/" + commentId;
+            deleteForm.submit();
+          };
+        });
+      });
+    </script>
+    <form name="notiAdminForm" method="POST"></form>
+    <script>
+      $(document).ready(function () {
+        $(".read-all").click(function () {
+          var notiForm = document.forms["notiAdminForm"];
+          notiForm.action = "/info?_method=PUT";
+          notiForm.submit();
+        });
+      });
+    </script>
+    <form name="notiForm" method="POST"></form>
+    <script>
+      $(document).ready(function () {
+        $(".noti-content").click(function () {
+          var notiId = $(this).attr("data-id");
+          var notiForm = document.forms["notiForm"];
+          notiForm.action = "/info/notification/" + notiId + "?_method=PUT";
+          notiForm.submit();
+        });
+      });
+    </script>
+    <form name="saveForm" method="POST"></form>
+    <script>
+      $(document).ready(function () {
+        $("#btn-update").click(function () {
+          $("input[name='username']").prop("disabled", false);
+        });
+        $("#btn-save").click(function () {
+          var username = $("#username").val();
+          var saveForm = document.forms["saveForm"];
+          saveForm.action = "/info/username/" + username + "?_method=PUT";
+          saveForm.submit();
+        });
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
