@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/1a1ee39ae0.js"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <nav aria-label="breadcrumb" class="main-breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/"><b>Trang chủ</b></a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/admin/statistical"><b>Thống kê</b></a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <b>Truyện</b>
+        </li>
+      </ol>
+    </nav>
+    <div class="row" style="padding: 30px">
+      <div class="col-md-2">
+        <h5><b style="color: red">Danh sách truyện</b></h5>
+      </div>
+      <div class="col-md-8"></div>
+      <div class="col-md-2">
+        <h5><b style="color: red">Số truyện hiện có: <%=totalBook%></b></h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card mb-2">
+        <div class="card-main">
+          <div
+            class="row"
+            style="
+              display: flex;
+              height: 50px;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+              padding-bottom: 20px;
+              border-bottom: solid thin gray;
+            "
+          >
+            <div class="col-md-1"><b style="color: blue">Ảnh bìa</b></div>
+            <div class="col-md-3">
+              <b style="color: blue">Tên truyện</b>
+            </div>
+            <div class="col-md-2">
+              <div class="dropdown">
+                <a
+                  class="btn dropdown-toggle"
+                  style="color: blue"
+                  role="button"
+                  id="dropdownMenuLink"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <b>Thể loại</b>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <% category.forEach (category=>{%>
+                  <li>
+                    <a
+                      style="color: black; text-decoration: none; padding: 10px"
+                      class="dropdown-item-category"
+                      href="/admin/statistical/book-statistical/<%=category.categoryName%>"
+                      ><%=category.categoryName%></a
+                    >
+                  </li>
+                  <%}) %>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="dropdown">
+                <a
+                  class="btn dropdown-toggle"
+                  style="color: blue"
+                  role="button"
+                  id="dropdownMenuLink"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <b>Tình trạng</b>
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="/admin/statistical/book-statistical/true"
+                      >Đã hoàn thành</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="/admin/statistical/book-statistical/false"
+                      >Chưa hoàn thành</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <b style="color: blue">Số người thanh toán</b>
+            </div>
+            <div class="col-md-2">
+              <b style="color: blue">Số người theo dõi </b>
+            </div>
+          </div>
+          <% book.forEach (book=>{%>
+          <div
+            class="row"
+            style="
+              display: flex;
+              height: 50px;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+              padding-bottom: 20px;
+              border-bottom: solid thin gray;
+            "
+          >
+            <div class="col-md-1">
+              <img src="<%=book.imgURL%>" height="50px" width="40px" />
+            </div>
+            <div class="col-md-3">
+              <p><%=book.title%></p>
+            </div>
+            <div class="col-md-2">
+              <p><%=book.category%></p>
+            </div>
+            <div class="col-md-2">
+              <% if (book.status==true) {%>
+              <p>Hoàn thành</p>
+              <%} else {%>
+              <p>Chưa hoàn thành</p>
+              <%}%>
+            </div>
+            <div class="col-md-2">
+              <p><%=book.numberUserPayFor%></p>
+            </div>
+            <div class="col-md-2">
+              <p><%=book.follow%></p>
+            </div>
+          </div>
+          <%}) %>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {});
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

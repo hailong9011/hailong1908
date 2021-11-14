@@ -28,7 +28,11 @@ exports.getStatistical = async (req, res) => {
   const book = await Book.find({}).countDocuments();
   const isAdmin = req.session.isAdmin;
   const category = await Category.find({});
-  const revenue = await Turnover.findOne({ for: "book" });
+  const turnover = await Turnover.find({});
+  var revenue = 0;
+  turnover.forEach((turnover) => {
+    revenue = revenue + turnover.turnover;
+  });
   res.render("admin/statistical.ejs", {
     book: book,
     TopUser: TopUser,
@@ -44,6 +48,107 @@ exports.getStatistical = async (req, res) => {
     bookUCP: bookUCP,
     countUser: countUser,
     userId: userId,
+  });
+};
+
+exports.getStatisticalBook = async (req, res) => {
+  const userId = req.session.userId;
+  const user = await User.findOne({ _id: userId });
+  const isAdmin = req.session.isAdmin;
+  const category = await Category.find({});
+  const numberNotiAdmin = await NotificationAdmin.find({
+    read: false,
+  }).countDocuments();
+  const check = req.params.check;
+  if (check == "all") {
+    const book = await Book.find({});
+    const totalBook = await Book.find({}).countDocuments();
+    res.render("admin/book-statistical.ejs", {
+      isAdmin: isAdmin,
+      category: category,
+      totalBook: totalBook,
+      numberNotiAdmin: numberNotiAdmin,
+      book: book,
+      user: user,
+      userId: userId,
+    });
+  } else if (check == "true" || check == "false") {
+    const book = await Book.find({ status: check });
+    const totalBook = await Book.find({ status: check }).countDocuments();
+    res.render("admin/book-statistical.ejs", {
+      isAdmin: isAdmin,
+      category: category,
+      totalBook: totalBook,
+      numberNotiAdmin: numberNotiAdmin,
+      book: book,
+      user: user,
+      userId: userId,
+    });
+  } else {
+    var name = RegExp(req.params.check, "i");
+    const book = await Book.find({ category: name });
+    const totalBook = await Book.find({ category: name }).countDocuments();
+    res.render("admin/book-statistical.ejs", {
+      isAdmin: isAdmin,
+      category: category,
+      totalBook: totalBook,
+      numberNotiAdmin: numberNotiAdmin,
+      book: book,
+      user: user,
+      userId: userId,
+    });
+  }
+};
+
+exports.getStatisticalRevenue = async (req, res) => {
+  const userId = req.session.userId;
+  const year = req.params.year;
+  const user = await User.findOne({ _id: userId });
+  const isAdmin = req.session.isAdmin;
+  const category = await Category.find({});
+  const numberNotiAdmin = await NotificationAdmin.find({
+    read: false,
+  }).countDocuments();
+  const thang = [];
+  for (i = 1; i <= 12; i++) {
+    const revenue = await Turnover.findOne({
+      $and: [{ month: i }, { year: year }],
+    });
+    if (revenue) {
+      thang[i] = revenue.turnover;
+    } else {
+      thang[i] = 0;
+    }
+  }
+  const yearTurnover = await Turnover.distinct("year");
+  res.render("admin/revenue.ejs", {
+    isAdmin: isAdmin,
+    thang: thang,
+    year: year,
+    yearTurnover: yearTurnover,
+    category: category,
+    numberNotiAdmin: numberNotiAdmin,
+    user: user,
+    userId: userId,
+  });
+};
+
+exports.getStatisticalUser = async (req, res) => {
+  const userId = req.session.userId;
+  const user = await User.findOne({ _id: userId });
+  const userManage = await User.find({});
+  const isAdmin = req.session.isAdmin;
+  const category = await Category.find({});
+  const numberNotiAdmin = await NotificationAdmin.find({
+    read: false,
+  }).countDocuments();
+  res.render("admin/user-statistical.ejs", {
+    isAdmin: isAdmin,
+    category: category,
+    numberNotiAdmin: numberNotiAdmin,
+    user: user,
+    userId: userId,
+    userManage: userManage,
   });
 };
 
@@ -339,6 +444,7 @@ exports.UpdateChapter = async (req, res) => {
       await chapter.save();
     }
     const listBook = await Follow.find({ bookFollowed: req.params.title });
+    const book = await Book.findOne({ title: req.params.title });
     if (listBook) {
       const bookUpdate = await Chapter.findOne({
         book_title: req.params.title,
@@ -352,7 +458,7 @@ exports.UpdateChapter = async (req, res) => {
           book: listBook.bookFollowed,
           date: time,
           read: false,
-          img: bookUpdate.imgURL,
+          img: book.imgURL,
         };
         i++;
       });

@@ -7,8 +7,12 @@ const turnoverSchema = new Schema({
     require: true,
     default: 0,
   },
-  for: {
-    type: String,
+  year: {
+    type: Number,
+    required: true,
+  },
+  month: {
+    type: Number,
     required: true,
   },
 });

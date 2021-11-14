@@ -907,7 +907,11 @@
       var yyyy = today.getFullYear();
       var hh = today.getHours();
       var mn = today.getMinutes();
-      time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+      if (mn.length == 1) {
+        time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + "0" + mn;
+      } else {
+        time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+      }
       var btnReport = document.getElementById("report-btn");
       var reportForm = document.forms["report-form"];
       var reportModal = document.getElementById("reportModal");

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/1a1ee39ae0.js"
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <nav aria-label="breadcrumb" class="main-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/"><b>Trang chủ</b></a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/admin/statistical"><b>Thống kê</b></a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <b>Người dùng</b>
+          </li>
+        </ol>
+      </nav>
+    <div class="row">
+      <div class="card mb-3">
+        <div class="card-main">
+          <div
+            class="row"
+            style="
+              display: flex;
+              height: 50px;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+              padding-bottom: 20px;
+              border-bottom: solid thin gray;
+            "
+          >
+            <div class="col-md-1"><b style="color: blue">Avatar</b></div>
+            <div class="col-md-3">
+              <b style="color: blue">Tên người dùng</b>
+            </div>
+            <div class="col-md-3"><b style="color: blue">Email</b></div>
+            <div class="col-md-3">
+              <b style="color: blue"
+                >Tổng số tiền đã thanh toán để mua truyện
+              </b>
+            </div>
+            <div class="col-md-2">
+              <div class="search">
+                <form id="search-form">
+                  <input
+                    id="search-input-second"
+                    type="search"
+                    placeholder="Tìm kiếm người dùng"
+                    style="max-width: 180px"
+                  /><button id="search-btn-second" style="max-height: 30px">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <% userManage.forEach (userManage => {%> <% if
+          (userManage.isAdmin==false) {%>
+          <div
+            class="row"
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+              padding: 10px;
+              border-bottom: solid thin gray;
+            "
+          >
+            <div class="col-md-1">
+              <img src="<%=userManage.avatar%>" class="rounded-circle" />
+            </div>
+            <div class="col-md-3"><%=userManage.username%></div>
+            <div class="col-md-3"><%=userManage.email%></div>
+            <div class="col-md-3"><%=userManage.cashPayed%></div>
+            <div class="col-md-2"></div> 
+          </div>
+          <%} %> <%}) %>
+        </div>
+      </div>
+    </div>
+    <script>
+      searchInput = $("#search-input-second");
+      searchButton = $("#search-btn-second");
+
+      searchButton.click((e) => {
+        e.preventDefault();
+        let inputValue = searchInput.val();
+        window.location.href = "/admin/manage/search/" + inputValue;
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

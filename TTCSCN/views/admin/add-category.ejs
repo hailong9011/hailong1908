@@ -147,10 +147,10 @@
       </script>
     </header>
     <% if(message.length > 0){ %>
-        <div class="alert alert-primary">
-          <span><%=message%></span>
-        </div>
-        <% } %>
+    <div class="alert alert-primary">
+      <span><%=message%></span>
+    </div>
+    <% } %>
     <div class="container-form">
       <div class="add-book">
         <h2><b>Nhập thể loại</b></h2>
@@ -162,6 +162,7 @@
               id="category"
               name="category"
               class="form-control"
+              required
             />
           </div>
           <div class="form-group">

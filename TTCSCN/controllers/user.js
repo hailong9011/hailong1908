@@ -6,6 +6,7 @@ const Book = require("../models/book.model");
 const Turnover = require("../models/turnover.model");
 const Notification = require("../models/notification.model");
 const NotificationAdmin = require("../models/notificationadmin.model");
+const bcrypt = require("bcrypt");
 const { unsubscribe } = require("../routes/homepage");
 
 exports.getInfo = async (req, res) => {
@@ -113,32 +114,36 @@ exports.getUpdatePassword = async (req, res) => {
 exports.updatePassword = async (req, res) => {
   const userId = req.session.userId;
   const user = await User.findOne({ _id: userId });
-  const result = await User.findOne({ password: req.body.curpassword });
-  console.log(result);
-  if (result == null) {
-    req.flash("message-pass", "Mật khẩu hiện tại không đúng");
-    res.redirect("/password");
-  } else {
-    if (result.password.length > 0) {
-      if (req.body.curpassword == req.body.newpassword) {
-        req.flash(
-          "message-pass",
-          "Mật khẩu mới không được giống mật khẩu hiện tại"
-        );
+  bcrypt.compare(
+    req.body.curpassword,
+    user.password,
+    async function (err, result) {
+      if (result == false) {
+        req.flash("message-pass", "Mật khẩu hiện tại không đúng");
         res.redirect("/password");
       } else {
-        if (req.body.newpassword == req.body.repassword) {
-          user.password = req.body.newpassword;
-          await user.save();
-          req.flash("message-pass", "Đổi mật khẩu thành công");
+        if (req.body.curpassword == req.body.newpassword) {
+          req.flash(
+            "message-pass",
+            "Mật khẩu mới không được giống mật khẩu hiện tại"
+          );
           res.redirect("/password");
         } else {
-          req.flash("message-pass", "Mật khẩu không khớp");
-          res.redirect("/password");
+          if (req.body.newpassword == req.body.repassword) {
+            salt = await bcrypt.genSalt();
+            newpassword = await bcrypt.hash(req.body.newpassword, salt);
+            user.password = newpassword;
+            await user.save();
+            req.flash("message-pass", "Đổi mật khẩu thành công");
+            res.redirect("/password");
+          } else {
+            req.flash("message-pass", "Mật khẩu không khớp");
+            res.redirect("/password");
+          }
         }
       }
     }
-  }
+  );
 };
 
 exports.getRecharge = async (req, res) => {
@@ -175,7 +180,6 @@ exports.Recharge = async (req, res) => {
   const userId = req.session.userId;
   const time = req.params.time;
   const action = "Nạp tiền: " + req.params.cash;
-  const bank = req.params.bank;
   const user = await User.findOne({ _id: userId });
   if (req.params.book == "null" && parseInt(req.params.money) == 0) {
     url = "/recharge";
@@ -231,12 +235,27 @@ exports.PayForBook = async (req, res) => {
   const cash = req.params.cash;
   const time = req.params.time;
   const bookTitle = req.params.title;
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
   const url = "/book/" + req.params.title;
   const action = "Thanh toán" + bookTitle + ": " + cash;
   const user = await User.findOne({ _id: userId });
   const book = await Book.findOne({ title: bookTitle });
-  const turnover = await Turnover.findOne({ for: "book" });
-  turnover.turnover = turnover.turnover + parseInt(cash);
+  const turnover = await Turnover.findOne({
+    $and: [{ year: year }, { month: month }],
+  });
+  if (turnover) {
+    turnover.turnover = turnover.turnover + parseInt(cash);
+    await turnover.save();
+  } else {
+    const turnoverNew = new Turnover({
+      turnover: turnover + parseInt(cash),
+      year: year,
+      month: month,
+    });
+    await turnoverNew.save();
+  }
   book.numberUserPayFor = book.numberUserPayFor + 1;
   user.totalCash = user.totalCash - parseInt(cash);
   user.cashPayed = user.cashPayed + parseInt(cash);
@@ -247,7 +266,6 @@ exports.PayForBook = async (req, res) => {
     action: action,
     surplus: user.totalCash,
   });
-  await turnover.save();
   await book.save();
   await paymentbook.save();
   await user.save();

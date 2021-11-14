@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/1a1ee39ae0.js"
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <header>
+      <div class="navbar-hd">
+        <div class="logo">
+          <a href="/"
+            ><img src="/img/logo.jpg" alt="" width="250" height="70"
+          /></a>
+        </div>
+        <div class="menu">
+          <li><a href="/">Trang chủ</a></li>
+          <li>
+            <a href="/book/search">Danh mục</a>
+            <ul class="list-menu">
+              <%category.forEach(category => {%>
+              <li>
+                <a href="/book/search/<%=category.categoryName%>"
+                  ><%=category.categoryName%></a
+                >
+              </li>
+              <%} ) %>
+            </ul>
+          </li>
+          <li><a href="/book/followed-book">Theo dõi</a></li>
+        </div>
+        <div class="search">
+          <li>
+            <form id="search-form">
+              <input
+                id="search-input"
+                type="search"
+                placeholder="Tìm kiếm theo truyện, tác giả, thể loại,...(viết có dấu)"
+              /><button id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </li>
+        </div>
+        <div class="login">
+          <% if(userId){ %> <% if(isAdmin == true){%>
+          <li>
+            <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+            <% if (numberNotiAdmin != 0){%>
+            <span class="noti"><%=numberNotiAdmin%></span>
+            <%} %>
+            <a style="padding-left: 10px" href="/info"
+              ><span><b><%=user.username%></b></span></a
+            >
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/admin/manage"><i class="fas fa-tasks"></i>Quản lý</a>
+              </li>
+              <ul class="dropright">
+                <li>
+                  <a href="/admin/add-book">Thêm truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/book-list">Cập nhật truyện</a>
+                </li>
+                <li>
+                  <a href="/admin/delete-book">Xóa truyện</a>
+                </li>
+              </ul>
+              <li>
+                <a href="/admin/statistical"
+                  ><i class="fas fa-calculator"></i>Thống kê</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} else{ %>
+          <li>
+            <div class="avatar">
+              <img src="<%=user.avatar%>&size=32" class="rounded-circle" />
+              <% if (numberNoti != 0){%>
+              <span class="noti"><%=numberNoti%></span>
+              <%} %>
+              <a style="padding-left: 10px" href="/info"
+                ><span><b><%=user.username%></b></span></a
+              >
+            </div>
+            <ul class="info">
+              <li>
+                <a href="/info"
+                  ><i class="fas fa-user"></i>Thông tin tài khoản</a
+                >
+              </li>
+              <li>
+                <a href="/recharge"
+                  ><i class="fas fa-credit-card"></i>Nạp tiền</a
+                >
+              </li>
+              <li>
+                <a href="/password"><i class="fas fa-key"></i>Đổi mật khẩu</a>
+              </li>
+              <li>
+                <a href="/logout"
+                  ><i class="fas fa-sign-out-alt"></i>Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </li>
+          <%} %> <%} else { %>
+          <li><i class="fas fa-user"></i><a href="/login">Đăng nhập</a></li>
+          <%} %>
+        </div>
+      </div>
+      <script>
+        searchInput = $("#search-input");
+        searchButton = $("#search-btn");
+
+        searchButton.click((e) => {
+          e.preventDefault();
+          let inputValue = searchInput.val();
+          window.location.href = "/book/search/" + inputValue;
+        });
+      </script>
+    </header>
+    <div class="container-general">
+      <div>
+        <nav aria-label="breadcrumb" class="main-breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/"><b>Trang chủ</b></a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="/admin/statistical"><b>Thống kê</b></a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              <b>Doanh thu</b>
+            </li>
+          </ol>
+        </nav>
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <h4 style="color: red"><b>Doanh thu theo từng năm</b></h4>
+          <select
+            class="year-select"
+            name="year"
+            id="year"
+            style="padding: 10px"
+          >
+            <% yearTurnover.forEach (yearTurnover=> { %> <% if
+            (yearTurnover==year) {%>
+            <option value="<%=yearTurnover%>" selected>
+              Năm <%=yearTurnover%>
+            </option>
+            <%} else {%>
+            <option value="<%=yearTurnover%>">Năm <%=yearTurnover%></option>
+            <%} %> <% }) %>
+          </select>
+        </div>
+      </div>
+      <div>
+        <%var i=1%> <% thang.forEach (thang=>{ %>
+        <div id="thang<%=i%>" data-revenue="<%=thang%>" hidden></div>
+        <% i++%> <% }) %>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+    <script>
+      const ctx = document.getElementById("myChart").getContext("2d");
+      var thang = [];
+      for (i = 1; i <= 12; i++) {
+        thang[i] = document
+          .getElementById(`thang${i}`)
+          .getAttribute("data-revenue");
+      }
+      const myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "Tháng 1",
+            "Tháng 2",
+            "Tháng 3",
+            "Tháng 4",
+            "Tháng 5",
+            "Tháng 6",
+            "Tháng 7",
+            "Tháng 8",
+            "Tháng 9",
+            "Tháng 10",
+            "Tháng 11",
+            "Tháng 12",
+          ],
+          datasets: [
+            {
+              label: "Doanh thu",
+              data: [thang[1],thang[2],thang[3],thang[4],thang[5],thang[6],thang[7],thang[8],thang[9],thang[10],thang[11],thang[12]],
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+              ],
+              borderColor: [
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $(".year-select").change(function () {
+          if (this.value) {
+            window.location.href = this.value;
+          }
+        });
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

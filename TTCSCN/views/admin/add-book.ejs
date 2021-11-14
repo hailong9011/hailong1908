@@ -157,11 +157,23 @@
         <form action="/admin/add-book" method="POST">
           <div class="form-group">
             <label for="link"><b>Link:</b></label>
-            <input type="text" id="link" name="link" class="form-control" />
+            <input
+              type="text"
+              id="link"
+              name="link"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="title"><b>Tên truyện:</b></label>
-            <input type="text" id="title" name="title" class="form-control" />
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="chapter"><b>Số chương:</b></label>
@@ -170,15 +182,28 @@
               id="chapter"
               name="chapter"
               class="form-control"
+              required
             />
           </div>
           <div class="form-group">
             <label for="price"><b>Giá:</b></label>
-            <input type="number" id="price" name="price" class="form-control" />
+            <input
+              type="number"
+              id="price"
+              name="price"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="author"><b>Tác giả:</b></label>
-            <input type="text" id="author" name="author" class="form-control" />
+            <input
+              type="text"
+              id="author"
+              name="author"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="category"><b>Thể loại:</b></label>
@@ -187,13 +212,22 @@
               id="category"
               name="category"
               class="form-control"
+              required
             />
             <span><b>Thể loại mới ?</b></span
-            ><a href="/admin/add-book/add-category" style="padding-left: 10px;">Thêm mới</a>
+            ><a href="/admin/add-book/add-category" style="padding-left: 10px"
+              >Thêm mới</a
+            >
           </div>
           <div class="form-group">
             <label for="imgURL"><b>Ảnh bìa:</b></label>
-            <input type="text" id="imgURL" name="imgURL" class="form-control" />
+            <input
+              type="text"
+              id="imgURL"
+              name="imgURL"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="status"><b>Tình trạng:</b></label>

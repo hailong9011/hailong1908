@@ -16,6 +16,7 @@
     src="https://kit.fontawesome.com/1a1ee39ae0.js"
     crossorigin="anonymous"
   ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
   <body>
     <header>
       <div class="navbar-hd">
@@ -150,33 +151,36 @@
       <div class="row">
         <div class="col-md-4">
           <div class="card bg-c-blue order-card">
-            <div class="card-block">
-              <h6 class="m-b-20"><b>Users</b></h6>
-              <h2 class="text-right">
-                <i class="fas fa-users f-left"></i><span><%=countUser%></span>
-              </h2>
-              <p class="m-b-0">
-                Tổng số user chưa mua truyện nào<span class="f-right"
-                  ><%=userNoPay-1%></span
-                >
-              </p>
-            </div>
+            <a href="/admin/statistical/user" style="color: white; text-decoration: none"
+              ><div class="card-block">
+                <h6 class="m-b-20"><b>Users</b></h6>
+                <h2 class="text-right">
+                  <i class="fas fa-users f-left"></i><span><%=countUser%></span>
+                </h2>
+              </div></a
+            >
           </div>
         </div>
-
         <div class="col-md-4">
           <div class="card bg-c-green order-card">
             <div class="card-block">
-              <h6 class="m-b-20"><b>Truyện</b></h6>
-              <h2 class="text-right">
-                <i class="fas fa-book f-left"></i><span><%=book%></span>
-              </h2>
-              <p class="m-b-0">
-                Truyện đã hoàn thành<span class="f-right"><%=bookCP%></span>
-              </p>
-              <p class="m-b-0">
-                Truyện chưa hoàn thành<span class="f-right"><%=bookUCP%></span>
-              </p>
+              <a
+                href="/admin/statistical/book-statistical/all"
+                style="color: white; text-decoration: none"
+              >
+                <h6 class="m-b-20"><b>Truyện</b></h6>
+                <h2 class="text-right">
+                  <i class="fas fa-book f-left"></i><span><%=book%></span>
+                </h2>
+                <p class="m-b-0">
+                  Truyện đã hoàn thành<span class="f-right"><%=bookCP%></span>
+                </p>
+                <p class="m-b-0">
+                  Truyện chưa hoàn thành<span class="f-right"
+                    ><%=bookUCP%></span
+                  >
+                </p>
+              </a>
             </div>
           </div>
         </div>
@@ -185,12 +189,11 @@
             <div class="card-block">
               <h6 class="m-b-20"><b>Doanh thu</b></h6>
               <h2 class="text-right">
-                <i class="fas fa-coins f-left"></i
-                ><span><%=revenue.turnover%> VNĐ</span>
+                <i class="fas fa-coins f-left"></i><span><%=revenue%> VNĐ</span>
               </h2>
               <p class="m-b-0">
                 Tổng doanh thu
-                <span class="f-right"><%=revenue.turnover%> VNĐ</span>
+                <span class="f-right"><%=revenue%> VNĐ</span>
               </p>
             </div>
           </div>
@@ -252,12 +255,12 @@
               </div>
               <div class="col-sm-6">
                 <% TopPayBook.forEach (TopPayBook => {%>
-                <span style="height: 65px;"><%=TopPayBook.title%></span>
+                <span style="height: 65px"><%=TopPayBook.title%></span>
                 <%}) %>
               </div>
               <div class="col-sm-3">
                 <% TopPayBook.forEach (TopPayBook => {%>
-                <span style="padding-bottom: 18px;height: 65px;"
+                <span style="padding-bottom: 18px; height: 65px"
                   ><%=TopPayBook.numberUserPayFor%> người</span
                 >
                 <%}) %>
@@ -301,6 +304,14 @@
         </div>
       </div>
     </div>
+    <script>
+      $(document).ready(function () {
+        var date = new Date();
+        $(".card.bg-c-yellow .card-block").click(function () {
+          window.location.href = "statistical/revenue/" + date.getFullYear();
+        });
+      });
+    </script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"

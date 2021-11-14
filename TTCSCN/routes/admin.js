@@ -3,6 +3,9 @@ const router = express.Router();
 const adminController = require("../controllers/admin");
 
 router.get("/statistical", adminController.getStatistical);
+router.get("/statistical/book-statistical/:check", adminController.getStatisticalBook);
+router.get("/statistical/revenue/:year", adminController.getStatisticalRevenue);
+router.get("/statistical/user", adminController.getStatisticalUser);
 router.get("/manage", adminController.getManage);
 router.get("/manage/search/:search", adminController.getSearchUser);
 router.get("/book-list/search/:search", adminController.getSearchListBook);

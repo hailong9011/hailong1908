@@ -4,6 +4,7 @@ const Category = require("../models/category.model");
 const Comment = require("../models/comment.model");
 const Notification = require("../models/notification.model");
 const NotificationAdmin = require("../models/notificationadmin.model");
+const bcrypt = require("bcrypt");
 
 exports.getHomepage = async (req, res) => {
   const userId = req.session.userId;
@@ -50,28 +51,27 @@ exports.getFormLogin = async (req, res) => {
 
 exports.postLogin = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
-  const inputPassword = req.body.password;
-  // if user exist then check the input password
-  if (user) {
-    // if the password correct, log the user in using session and back to the homepage
-    if (user.password == inputPassword) {
-      req.session.userId = user._id;
-      req.session.isAdmin = user.isAdmin;
-      res.cookie("userId", user._id);
-      res.cookie("isAdmin", user.isAdmin);
-      res.redirect("/");
+  bcrypt.compare(req.body.password, user.password, function (err, result) {
+    if (user) {
+      if (result == true) {
+        req.session.userId = user._id;
+        req.session.isAdmin = user.isAdmin;
+        res.cookie("userId", user._id);
+        res.cookie("isAdmin", user.isAdmin);
+        res.redirect("/");
+      } else {
+        req.flash("message", "Sai mật khẩu");
+        res.cookie("userId", user._id);
+        res.cookie("isAdmin", user.isAdmin);
+        res.redirect("login");
+      }
     } else {
-      req.flash("message", "Sai mật khẩu");
+      req.flash("message", "Tài khoản không tồn tại");
       res.cookie("userId", user._id);
       res.cookie("isAdmin", user.isAdmin);
       res.redirect("login");
     }
-  } else {
-    req.flash("message", "Tài khoản không tồn tại");
-    res.cookie("userId", user._id);
-    res.cookie("isAdmin", user.isAdmin);
-    res.redirect("login");
-  }
+  });
 };
 
 exports.getLogout = (req, res) => {
@@ -90,6 +90,8 @@ exports.getFormRegistry = async (req, res) => {
 };
 
 exports.Registry = async (req, res) => {
+  const salt = await bcrypt.genSalt();
+  password = await bcrypt.hash(req.body.password, salt);
   const validate = await User.findOne({ email: req.body.email });
   if (validate != null) {
     req.flash("message-user", "Email đã tồn tại");
@@ -101,7 +103,7 @@ exports.Registry = async (req, res) => {
     const user = new User({
       username: req.body.username,
       email: req.body.email,
-      password: req.body.password,
+      password: password,
       avatar: "https://ui-avatars.com/api/?name=" + req.body.username,
     });
     await user.save();

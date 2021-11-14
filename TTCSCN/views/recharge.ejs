@@ -155,7 +155,7 @@
       <div class="row">
         <div class="recharge" style="display: flex">
           <h4><b>Tài khoản hiện có: <%=user.totalCash%> VNĐ</b></h4>
-          <div style="padding-left: 30px"  >
+          <div style="padding-left: 30px">
             <button
               type="button"
               class="btn btn-info"
@@ -642,7 +642,11 @@
       var yyyy = today.getFullYear();
       var hh = today.getHours();
       var mn = today.getMinutes();
-      time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+      if (mn / 10 < 1) {
+        time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + "0" + mn;
+      } else {
+        time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+      }
       var payModal = document.getElementById("paybookModal");
       var btnPay = document.getElementById("btn-pay");
       var payForm = document.forms["payForm"];
@@ -663,7 +667,6 @@
         $(".payment-items").click(function () {
           $(".payment-items").removeClass("active");
           $(this).addClass("active");
-          var bank = $(this).attr("data-bs-data");
           $(".col-3").click(function () {
             $(".col-3").removeClass("active");
             $(this).addClass("active");
@@ -673,7 +676,11 @@
             var yyyy = today.getFullYear();
             var hh = today.getHours();
             var mn = today.getMinutes();
-            time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+            if (mn / 10 < 1) {
+              time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + "0" + mn;
+            } else {
+              time = yyyy + "-" + mm + "-" + dd + " " + hh + ":" + mn;
+            }
             var cash = parseInt($(this).attr("data-bs-cash"));
             var exampleModal = document.getElementById("exampleModal");
             var btnConfirm = document.getElementById("btn-confirm");
@@ -685,8 +692,6 @@
               btnConfirm.onclick = function () {
                 confirmForm.action =
                   "/recharge/pay/" +
-                  bank +
-                  "/" +
                   cash +
                   "/" +
                   time +

@@ -633,7 +633,19 @@ footer .row {
   color: red;
   cursor: pointer;
 }
-.text-truncate a{
+.text-truncate a {
   text-decoration: none;
   color: black;
+}
+.card.bg-c-blue .card-block:hover {
+  background-color: cornflowerblue;
+  cursor: pointer;
+}
+.card.bg-c-green .card-block:hover {
+  background-color: lightgreen;
+  cursor: pointer;
+}
+.card.bg-c-yellow .card-block:hover {
+  background-color: orange;
+  cursor: pointer;
 }

@@ -6,10 +6,7 @@ router.get("/info", userController.getInfo);
 router.get("/recharge/:title/:cash", userController.getPay);
 router.get("/password", userController.getUpdatePassword);
 router.get("/recharge", userController.getRecharge);
-router.post(
-  "/recharge/pay/:bank/:cash/:time/:book/:money",
-  userController.Recharge
-);
+router.post("/recharge/pay/:cash/:time/:book/:money", userController.Recharge);
 router.post("/recharge/paybook/:title/:cash/:time", userController.PayForBook);
 router.post("/comment/:time/:comment", userController.postHotComment);
 router.post("/info/delete-cmt/:id", userController.deleteCmt);

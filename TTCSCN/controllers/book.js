@@ -62,7 +62,6 @@ exports.getBookInfo = async (req, res) => {
   var paymentbook = await PaymentBook.findOne({
     $and: [{ userId: userId }, { action: name }],
   });
-  console.log(paymentbook);
   res.render("book/book-detail", {
     book: book,
     newChapter: newChapter,
